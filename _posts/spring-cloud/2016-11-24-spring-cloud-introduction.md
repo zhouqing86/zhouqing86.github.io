@@ -1,6 +1,6 @@
 ---
 layout: post
-comments: true
+comments: false
 categories: "Spring-Cloud"
 title: Spring Cloud介绍
 ---

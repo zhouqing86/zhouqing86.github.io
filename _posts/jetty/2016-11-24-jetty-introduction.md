@@ -1,6 +1,6 @@
 ---
 layout: post
-comments: true
+comments: false
 categories: Jetty源码阅读
 title: Jetty介绍
 ---

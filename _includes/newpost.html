@@ -5,13 +5,13 @@
         if (title!=null){
             title = title.replace(" ", "-");
             var currentdate = new Date();
-            var urlNewPage = "{{ site.newsourceroot }}?filename=_posts/" 
+            var urlNewPage = "{{ site.newsourceroot }}?filename=_posts/"
                 + currentdate.getFullYear() + "-" + (currentdate.getMonth()+1) + "-" + currentdate.getDate() + "-" + title + ".md";
-                
+
             var defaultText =  [
                 '---',
                 'layout: post',
-                'comments: true',
+                'comments: false',
                 'categories: diary',
                 '---',
                 '## Title',
@@ -21,7 +21,7 @@
             window.open(urlNewPage);
         }
     }
-    
+
     $(function() {
       // CreateNewPostLinks
       $('.newpost').each(function(){

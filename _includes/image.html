@@ -1,0 +1,4 @@
+<table class="image {% if include.inline %}inline{% endif %}">
+<caption align="bottom">{{ include.description }}</caption>
+<tr><td><img src="{{ include.url }}" alt="{{ include.description }}" {% if include.width %} width="{{ include.width }}" {% endif %} {% if include.height %} height="{{ include.height }}" {% endif %} /></td></tr>
+</table>

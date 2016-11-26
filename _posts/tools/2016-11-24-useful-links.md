@@ -1,6 +1,6 @@
 ---
 layout: post
-comments: true
+comments: false
 categories: 工具
 title: 有用链接
 ---

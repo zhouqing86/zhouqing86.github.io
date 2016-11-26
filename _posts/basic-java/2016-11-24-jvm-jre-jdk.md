@@ -32,7 +32,6 @@ title: JVM, JRE, JDK解释
 - 目前市面上有很多不同厂商的JVM，大部分是免费的，目前主要流行的有HotSpot VM，J9 VM， Zing VM等，目前Oracle / Sun JDK、OpenJDK的各种变种用的都是HotSpot VM。
 - JVM处于不断迭代发展之中，JDK8的HotSpot VM已经是以前的HotSpot VM与JRockit VM的合并版，也就是传说中的“HotRockit”，只是产品里名字还是叫HotSpot VM。
 
-<br/>
 
 ### 内存管理
 JVM在执行Java程序的过程中会把它所管理的内存划分为若干不同的数据区域，这些区域都有各自的用途以及创建和销毁的时间。这些区域包括：
@@ -42,7 +41,7 @@ JVM在执行Java程序的过程中会把它所管理的内存划分为若干不�
 - 本地方法栈，其为线程私有的内存区域，为JVM使用到的Native方法服务.
 - 程序计数器, 其为线程私有的内存区域，当前线程所执行的字节码的行号指示器，它是唯一一个没有规定任何OutOfMemoryError情况的区域.
 
-<br/>
+
 ### GC(垃圾收集)
 GC的目的在于清除不再使用的对象，GC需要通过相关算法来判断某对象是否可以被清除。GC的主要区域是堆，堆被划分为新生代和旧生代，JVM对新生代和旧生代采用不同的垃圾回收机制。
 - 新生代GC
@@ -54,7 +53,6 @@ GC的目的在于清除不再使用的对象，GC需要通过相关算法来判�
   - 并行GC(parallelMSC)
   - 并发GC(CMS)
 
-<br/>
 ### JIT（即时编译器)
 之前的Java程序是通过解释器解释执行的，字节码逐条解释，执行速度相对较慢。引入JIT的目的是为了提高程序的执行速度，JIT在程序运行时会把翻译过的机器码保存起来，已备下次使用，因此从理论上来说，采用该JIT技术可以接近以前纯编译技术。
 
@@ -100,7 +98,6 @@ tools.jar包含支持JDK的工具和实用程序的非核心类：tools.jar来�
 ### dt.jar
 > Also includes dt.jar, the DesignTime archive of BeanInfo files that tell interactive development environments (IDE's) how to display the Java components and how to let the developer customize them for an application.
 
-<br/>
 ## 参考资料
 - [Java Programming Environment and the Java Runtime Environment (JRE)](https://docs.oracle.com/cd/E19455-01/806-3461/6jck06gqd/index.html)
 - [What is difference between JDK, JRE and JVM?](https://www.quora.com/What-is-difference-between-JDK-JRE-and-JVM)
@@ -108,6 +105,7 @@ tools.jar包含支持JDK的工具和实用程序的非核心类：tools.jar来�
 - [Comparison of Java virtual machines](https://en.wikipedia.org/wiki/Comparison_of_Java_virtual_machines)
 - [精简的JRE详解](https://my.oschina.net/benhaile/blog/211804)
 - [JDK and JRE File Structure](http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/jdkfiles.html)
+
 
 <script type="text/javascript">
 $(document).ready(function() {

@@ -12,9 +12,9 @@ title: JVM, JRE, JDK解释
 
 下面两幅图片简单说明了 **JVM** (Java Virtual Machine, Java虚拟机), **JRE** (Java Runtime Environment, Java运行时环境), **JDK** (Java Development Kit, Java软件开发工具包)的关系。
 
-{% include image.html url="/static/img/jvm-jre-jdk-1.jpg" description="图1" height="400px" inline="true" %}
+{% include image.html url="/static/img/java/jvm-jre-jdk-1.jpg" description="图1" height="400px" inline="true" %}
 
-{% include image.html url="/static/img/jvm-jre-jdk-2.jpg" description="图2" height="400px" inline="true" %}
+{% include image.html url="/static/img/java/jvm-jre-jdk-2.jpg" description="图2" height="400px" inline="true" %}
 
 图一中简单的说明了三者之间的从属关系:
 - JRE = JVM + 核心基础类库

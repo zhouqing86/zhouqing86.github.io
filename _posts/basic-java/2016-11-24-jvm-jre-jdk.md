@@ -2,7 +2,7 @@
 layout: post
 comments: false
 categories: Java基础
-date:   2016-11-24 18:30:54
+date:   2016-11-26 18:30:54
 title: JVM, JRE, JDK解释
 ---
 

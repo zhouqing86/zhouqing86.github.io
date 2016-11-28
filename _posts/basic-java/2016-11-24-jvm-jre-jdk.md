@@ -27,7 +27,7 @@ title: JVM, JRE, JDK解释
 * JVM负责读取Java字节码并使得程序运行在硬件平台上
 * JRE是JVM的实践，是Java程序的运行环境
 
-##
+## JVM
 
 - JVM是一个虚拟计算机，它包括一套字节码指令集、一组寄存器、一个栈、一个垃圾回收堆和一个存储方法域。
 - JVM对Java编程语言是一无所知的，但它能识别.class格式的文件（包括字节码，符号表以及辅助信息，这意味着任何语言如果能编译成.class格式文件都能运行在JVM上。
@@ -53,7 +53,7 @@ GC的目的在于清除不再使用的对象，GC需要通过相关算法来判�
   - 串行GC(SerialGC)
   - 并行回收GC(ParallelScavenge)
   - 并行GC(ParNew)
-  
+
 * 旧生代GC
   - 串行GC(SerialMSC)
   - 并行GC(parallelMSC)

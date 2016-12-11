@@ -8,9 +8,9 @@ title: Java 反射
 
 <div id="toc"></div>
 
-本文内容参考自(Java Reflection Tutorial)[http://tutorials.jenkov.com/java-reflection/index.html]
+本文内容参考自[Java Reflection Tutorial](http://tutorials.jenkov.com/java-reflection/index.html)
 
-文章相关测试代码参考 https://github.com/zhouqing86/three-java/blob/master/src/test/java/medium/ReflectionTest.java
+文章相关测试代码参考 [ReflectionTest.java](https://github.com/zhouqing86/three-java/blob/master/src/test/java/medium/ReflectionTest.java)
 
 ## 在类上的反射
 

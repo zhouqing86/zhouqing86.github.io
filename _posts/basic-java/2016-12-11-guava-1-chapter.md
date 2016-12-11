@@ -2,7 +2,7 @@
 layout: post
 comments: false
 categories: Java基础
-date:   2016-11-26 18:30:54
+date:   2016-12-11 18:30:54
 title: Guava 20.0 ()
 ---
 
@@ -15,8 +15,8 @@ Guava是Google的Java开发人员经常使用的库
 
 
 ## 参考资料
-[Google Guava官方教程（中文版](http://ifeve.com/google-guava/)
-[Guava Wiki](https://github.com/google/guava/wiki)
+- [Google Guava官方教程（中文版](http://ifeve.com/google-guava/)
+- [Guava Wiki](https://github.com/google/guava/wiki)
 
 <script type="text/javascript">
 $(document).ready(function() {

@@ -2,7 +2,7 @@
 layout: post
 comments: false
 categories: 想法
-date:   2016-11-26 18:30:54
+date:   2016-12-11 18:30:54
 title: Java想法
 ---
 
@@ -10,9 +10,6 @@ title: Java想法
 
 - 每次通过build.gradle导入一个库时，总是需要手动浏览器去maven浏览器中搜，能否开发一个idea插件简化这个过程？
 
-## 参考资料
-[Google Guava官方教程（中文版](http://ifeve.com/google-guava/)
-[Guava Wiki](https://github.com/google/guava/wiki)
 
 <script type="text/javascript">
 $(document).ready(function() {

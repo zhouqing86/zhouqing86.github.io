@@ -3,7 +3,7 @@ layout: post
 comments: false
 categories: 画画
 date:   2016-11-26 18:30:54
-title: 我要学画画第一个小时
+title: 我要学画画第二个小时
 ---
 
 第二天是学习简笔画，[简笔画第二天](http://www.wtoutiao.com/p/i1dISI.html)

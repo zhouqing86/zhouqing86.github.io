@@ -202,6 +202,8 @@ forEach方法接受`java.util.function.Consumer`作为其参数。
 
 Java8中接口中可以有实现代码，可以使用default或static关键字来修饰有具体实现的方法。
 
+Default方法加入到java中，这是引人关注的事情。Default方法可以认为是Lambda表达式和JDK类库之间的桥梁。引入Default方法的主要目的是为了升级标准JDK接口，另外也是为了我们最终能在Java8中顺畅使用Lambda表达式。
+
 ### Java Time API
 
 - `LocalDate today = LocalDate.now();`

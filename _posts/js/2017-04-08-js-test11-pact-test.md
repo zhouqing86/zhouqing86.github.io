@@ -45,6 +45,8 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 4. 删除某个API，不确定谁还在用它。
 
+5. 后端的节点还没有开发完成，前端开发受阻。
+
 契约测试试图基于契约快速反馈，解决上述的问题：
 
 1. 生产者端做契约的验证，即便是一次小的改动，也会验证是否会针对不同的消费者给出规定的结果。
@@ -198,6 +200,8 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
     }
     ```
 
+<br />
+
 #### 生产者端测试
 
 生产者端的流程往往是从下层API，数据库或其他持久化存储中搜索/读取数据，在生产者中做数据加工后输出给消费者端。
@@ -286,17 +290,83 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
     2）使用 `require('pact').Verifier.verifyProvider` 来验证契约。
 
-### Java例子
-
-#### 消费者端测试
-
-#### 生产者端测试
-
 ## Pact Broker
+
+[Pact Broker](https://github.com/bethesque/pact_broker)是契约的管理者(代理人)。它提供了：
+
+- 发布和获取契约的接口
+
+如 http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0
+
+- 服务之间的依赖关系
+
+- 契约的版本管理
+
+关于如何使用Pact broker:
+
+1. 如果你的电脑是已经支持docker，我们可以直接使用已经docker化好的[Pact Broker docker](https://hub.docker.com/r/dius/pact_broker/)，创建docker-compose.yml，如:
+
+    ```
+    ---
+    db:
+      image: postgres:9.4
+      environment:
+        - POSTGRES_USER=pact
+        - POSTGRES_PASSWORD=test
+
+    web:
+      image: dius/pact_broker
+      ports: ["8080:80"]
+      links: ["db"]
+      environment:
+        - PACT_BROKER_DATABASE_USERNAME=pact
+        - PACT_BROKER_DATABASE_PASSWORD=test
+        - PACT_BROKER_DATABASE_HOST=db
+        - PACT_BROKER_DATABASE_NAME=pact
+    ```
+
+    执行 `docker-compose up`后启动pact broker. 可以从[http://localhost:8080](http://localhost:8080)访问。
+
+2. 消费者端创建 publishPacts.js 来发布契约:
+
+    ```
+    const pact = require('@pact-foundation/pact-node');
+    const path = require('path');
+
+    pact.publishPacts({
+      pactUrls: [path.join(process.cwd(), 'pacts')],
+      pactBroker: 'http://localhost:8080',
+      consumerVersion: '1.0.0'
+    });
+    ```
+
+    执行 `node publishPacts.js` 即可将pacts目录下的契约发布到pact broker上。
+
+3. 查看pact broker上的契约
+
+访问 http://localhost:8080 会跳转到 http://localhost:8080/ui/relationships：
+
+{% include image.html url="/static/img/js/pact-ui-relationships.png" description="契约关系" height="200px" inline="false" %}
+
+访问pact broker上的API文档:
+
+{% include image.html url="/static/img/js/pact-api-document.png" description="API文档" height="400px" inline="false" %}
+
+访问ToDoApp的可视化的图形关系:
+
+{% include image.html url="/static/img/js/pact-todo-app.png" description="依赖关系" height="100px" inline="false" %}
+
+4. 生产者端只需要修改pactUrls的配置即可测试:
+
+```
+pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/latest']
+```
+
+<br />
 
 ## 契约测试存在的问题
 
-1. 生产者端的开发/维护人员的每次提交都对Pact测试负责，即便是消费者端修改导致Pact挂掉。
+1. 生产者端的开发/维护人员的每次提交都对Pact测试负责，即便是消费者端修改导致Pact测试挂掉。
 
 2. 消费者契约变化后提交给契约管理者与生产者提取契约验证两个行为之间存在时间差。
 
@@ -304,20 +374,32 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 4. 生产者端往往需要mock底层数据以使得其能满足consumer的结果要求。
 
-## 与其他测试的区别于关系
+## 与其他测试的区别与关系
 ### 契约测试不是集成测试
 
+集成测试是单元测试的逻辑扩展。由于单元测试存在的一个问题是：单元在隔离状态下运作良好，但并不代表它们放在一起是否也能良好地运作。
 
-### 契约不是E2E测试
+所以集成测试是一个宽泛的概念，集成测试可以小到类单元测试（如测试了两个单元类即可看做集成测试）， 也可以大道类系统测试(从后台到前端所有组件)。
 
-### GraphQL与契约测试
+集成测试可能会集成测试数据的持久化（如存取到数据库）等等，确保组合起来的单元在类真实的环境中也能执行符合期望。
 
-### BFF与契约测试
+### 契约不是端到端(E2E)测试
+
+端到端的测试期望测试到一个用户行为引发的整个系统运转流程。如用户打开浏览器，访问网站注册页面，填写注册表单，提交表单后请求会发到后端并最终提交到数据库并发挥注册成功的结果，页面弹出注册成功的提示。
+
+测试人员可以手动执行端到端的测试，这时测试人员就是用户，但同时又能检查数据库的数据。
+
+当然我们也希望能够将端到端测试自动化起来，如使用Selenium等工具来模拟用户操作，但是自动化的端到端测试往往无法做到对每一个系统中的中间状态做断言，只能基于页面测试打开页面，注册表单，返回注册成功的弹出框。
 
 ### 参考资料
 
 - [nodejs pact](https://www.npmjs.com/package/pact)
 
+- [微服务场景下的自动化测试](http://icodeit.org/2016/10/testing-in-microservice-context/)
+
+- [Pact Broker](https://github.com/bethesque/pact_broker)
+
+- [本文的测试源码](https://github.com/zhouqing86/js-pact-tut)
 
 <script type="text/javascript">
 $(document).ready(function() {

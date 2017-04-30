@@ -85,9 +85,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 {% include image.html url="/static/img/js/user-service-pact.png" description="契约" height="200px" inline="true" %}
 
-### JS例子
-
-#### 消费者端测试
+### 消费者端测试
 
 1. 参考[JS测试之Mocha](/2017/03/26/js-test4-mocha/)中的 `Node.js + mocha + chai`章节创建本地测试环境。
 
@@ -202,7 +200,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 <br />
 
-#### 生产者端测试
+### 生产者端测试
 
 生产者端的流程往往是从下层API，数据库或其他持久化存储中搜索/读取数据，在生产者中做数据加工后输出给消费者端。
 
@@ -290,7 +288,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
     2）使用 `require('pact').Verifier.verifyProvider` 来验证契约。
 
-## Pact Broker
+### Pact Broker
 
 [Pact Broker](https://github.com/bethesque/pact_broker)是契约的管理者(代理人)。它提供了：
 
@@ -346,7 +344,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 访问 http://localhost:8080 会跳转到 http://localhost:8080/ui/relationships：
 
-{% include image.html url="/static/img/js/pact-ui-relationships.png" description="契约关系" height="200px" inline="false" %}
+{% include image.html url="/static/img/js/pact-ui-relationships.png" description="契约关系" height="160px" inline="false" %}
 
 访问pact broker上的API文档:
 
@@ -374,7 +372,7 @@ pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/la
 
 4. 生产者端往往需要mock底层数据以使得其能满足consumer的结果要求。
 
-## 与其他测试的区别与关系
+## 与其他测试的区别
 ### 契约测试不是集成测试
 
 集成测试是单元测试的逻辑扩展。由于单元测试存在的一个问题是：单元在隔离状态下运作良好，但并不代表它们放在一起是否也能良好地运作。
@@ -383,7 +381,7 @@ pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/la
 
 集成测试可能会集成测试数据的持久化（如存取到数据库）等等，确保组合起来的单元在类真实的环境中也能执行符合期望。
 
-### 契约不是端到端(E2E)测试
+### 契约测试不是端到端(E2E)测试
 
 端到端的测试期望测试到一个用户行为引发的整个系统运转流程。如用户打开浏览器，访问网站注册页面，填写注册表单，提交表单后请求会发到后端并最终提交到数据库并发挥注册成功的结果，页面弹出注册成功的提示。
 

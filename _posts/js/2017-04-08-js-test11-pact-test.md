@@ -8,7 +8,7 @@ title: JS测试之Pact测试
 
 <div id="toc"></div>
 <br />
-Pact在英文上的解释是"a formal agreement between individuals or parties", 其实协议、约定或条约。
+Pact在英文上的解释是"a formal agreement between individuals or parties", 表示协议、约定或条约。
 
 Pact测试又名契约测试，是在消费者服务于生产者服务之间的 `消费者驱动测试`。 本文后续内容将只使用 `契约测试` 来表示Pact测试。
 
@@ -302,7 +302,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 关于如何使用Pact broker:
 
-1. 如果你的电脑是已经支持docker，我们可以直接使用已经docker化好的[Pact Broker docker](https://hub.docker.com/r/dius/pact_broker/)，创建docker-compose.yml，如:
+- 如果你的电脑是已经支持docker，我们可以直接使用已经docker化好的[Pact Broker docker](https://hub.docker.com/r/dius/pact_broker/)，创建docker-compose.yml，如:
 
     ```
     ---
@@ -325,7 +325,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
     执行 `docker-compose up`后启动pact broker. 可以从[http://localhost:8080](http://localhost:8080)访问。
 
-2. 消费者端创建 publishPacts.js 来发布契约:
+- 消费者端创建 publishPacts.js 来发布契约:
 
     ```
     const pact = require('@pact-foundation/pact-node');
@@ -340,7 +340,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
     执行 `node publishPacts.js` 即可将pacts目录下的契约发布到pact broker上。
 
-3. 查看pact broker上的契约
+- 查看pact broker上的契约
 
 访问 http://localhost:8080 会跳转到 http://localhost:8080/ui/relationships：
 
@@ -354,11 +354,45 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 {% include image.html url="/static/img/js/pact-todo-app.png" description="依赖关系" height="100px" inline="false" %}
 
-4. 生产者端只需要修改pactUrls的配置即可测试:
+- 生产者端只需要修改pactUrls的配置即可测试:
 
-```
-pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/latest']
-```
+  ```
+  pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/latest']
+  ```
+
+### 灵活匹配
+
+消费者端制定的契约中每个字段不一定需要完全匹配，其也支持正则匹配、类型匹配、数组匹配。
+
+- 正则匹配
+
+  ```
+  'gender': term({
+          matcher: 'F|M',
+          generate: 'F'
+        })
+  ```
+
+- 类型匹配
+
+  ```
+  body: {
+        id: like(1),
+        name: like('Billy')
+      }
+  ```
+
+- 数组匹配
+
+  ```
+  'users': eachLike({
+      name: like('God')
+    }, {
+      min: 2
+    });
+  ```
+
+  min的默认值是1， 这里表示至少有2个user。
 
 <br />
 
@@ -372,6 +406,8 @@ pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/la
 
 4. 生产者端往往需要mock底层数据以使得其能满足consumer的结果要求。
 
+<br />
+
 ## 与其他测试的区别
 ### 契约测试不是集成测试
 
@@ -380,6 +416,8 @@ pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/la
 所以集成测试是一个宽泛的概念，集成测试可以小到类单元测试（如测试了两个单元类即可看做集成测试）， 也可以大道类系统测试(从后台到前端所有组件)。
 
 集成测试可能会集成测试数据的持久化（如存取到数据库）等等，确保组合起来的单元在类真实的环境中也能执行符合期望。
+
+<br />
 
 ### 契约测试不是端到端(E2E)测试
 
@@ -396,6 +434,8 @@ pactUrls: ['http://localhost:8080/pacts/provider/TodoService/consumer/TodoApp/la
 - [微服务场景下的自动化测试](http://icodeit.org/2016/10/testing-in-microservice-context/)
 
 - [Pact Broker](https://github.com/bethesque/pact_broker)
+
+- [Pact Docs](https://docs.pact.io/documentation/matching.html)
 
 - [本文的测试源码](https://github.com/zhouqing86/js-pact-tut)
 

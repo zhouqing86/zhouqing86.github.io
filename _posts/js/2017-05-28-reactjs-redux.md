@@ -196,7 +196,14 @@ export default connect(
 
 可以看出，`Smart`组件是将状态和状态操作接口绑定在了`Dumb`组件上。执行绑定的是react-redux提供的`connect`函数。
 
-`connect`函数还有更多的高级用法，可参考
+- connect()(Counter)将默认传递dispatch函数给Counter组件，Counter组件可以通过props.dispatch获取dispatch函数。
+
+- 如果想让Counter组件访问到state，必须在Counter组件中传递`mapStateToProps`
+
+> 如果想让传递自定义的属性给Counter, 注意mapStateToProps的定义将是`mapStateToProps(state, ownProps)`
+
+
+`connect`函数还有更多的高级用法，可参考[react-redux api document](https://github.com/reactjs/react-redux/blob/master/docs/api.md)
 
 react-router还需要解决一个问题，就是怎么样把状态管理者对象与React关联起来呢。只是有了connect函数显然不够。react-router提供了一个`Provider`组件来引入状态管理者，引入的方式如:
 
@@ -204,12 +211,12 @@ react-router还需要解决一个问题，就是怎么样把状态管理者对�
 import { Provider } from 'react-redux';
 React.render((
   <Provider store={store}>
-    {() => <App />}
+    <App />
   </Provider>
 ), targetEl);
 ```
 
-> Provider组件的child必须是一个函数，所以这里是{() => <App />}
+> Provider与connect必须配合来用。
 
 在于react-router配合使用时，可以参考：
 

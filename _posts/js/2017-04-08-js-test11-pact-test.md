@@ -10,13 +10,13 @@ title: JS测试之Pact测试
 <br />
 Pact在英文上的解释是"a formal agreement between individuals or parties", 表示协议、约定或条约。
 
-Pact测试又名契约测试，是在消费者服务于生产者服务之间的 `消费者驱动测试`。 本文后续内容将只使用 `契约测试` 来表示Pact测试。
+Pact测试又名契约测试，是消费者服务与生产者服务之间的 `消费者驱动测试`。 本文后续内容将使用 `契约测试` 来表示Pact测试。
 
 ## 不平等合约
 
 从 `消费者驱动测试` 我们能感觉到契约测试中两个角色消费者服务于生产者服务之间的不平等。
 
-站在吃瓜群众的角度，什么是平等合约和不平等合约呢，我们拿一个现实中的例子来说明，生产者是服装定制生产企业(代号P)，消费者是每年都需要批量定制工装的某银行(代号C)，P和C每年签订合约。
+站在吃瓜群众的角度，什么是平等合约和不平等合约呢，我们拿一个虚构的例子来说明，生产者是服装定制生产企业(代号P)，消费者是每年都需要批量定制工装的某银行(代号C)，P和C每年签订合约。
 
 1. 第一年，C统计今年工装的需求（款式、颜色、数量、预算等），并附加很多苛刻奇葩的要求，并拟定了合约，P为了从其他竞争对手中抢到C的订单，P接受了这个挣不到钱的不平等合约。
 
@@ -69,7 +69,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 2. 不同的服务可能使用不同的技术栈(Ruby, JS, Java, Python等)，契约的格式需要统一且互相之间易于解析。
 
-3. 将Pact测试集成到持续集成管道中，便于自动化验证。
+3. 将契约测试集成到持续集成管道中，便于自动化验证。
 
 <br />
 
@@ -77,7 +77,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 契约测试的例子相对各种语言的HelloWorld来说，是比较复杂的，为了使得例子尽量简单易懂，我们先做一些说明：
 
-1. 本地做Pact测试可以不需要搭建契约管理者环境，消费者端生成的契约拷贝到生产者端进行验证即可。
+1. 本地做契约可以不需要搭建契约管理者环境，消费者端生成的契约拷贝到生产者端进行验证即可。
 
 2. 消费者端持有用户的ID， GET '/user/:id' 需要获取用户的姓名。
 
@@ -87,13 +87,13 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 ### 消费者端测试
 
-1. 参考[JS测试之Mocha](/2017/03/26/js-test4-mocha/)中的 `Node.js + mocha + chai`章节创建本地测试环境。
+1. 参考[JS测试之Mocha](http://zhouqing86.github.io/2017/03/26/js-test4-mocha/)中的 `Node.js + mocha + chai`章节创建本地测试环境。
 
 2. `npm install -D pact`安装npm的pact包 [pact](https://www.npmjs.com/package/pact)。
 
 3. 创建test/consumer/consumer-test.js文件:
 
-    1) 创建一个Pact对象，其表示依赖的一个生产者端
+    1) 创建一个pact对象，其表示依赖的一个生产者端
 
     ```
     const provider = pact({
@@ -107,9 +107,9 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
     });
     ```
 
-    2) `provider.setup()` 启动mock server来mock生产者服务
+    2) 需要调用`provider.setup()` 启动mock server来mock生产者服务
 
-    3）定义消费者与生产者相互交互的内容，与前一步结合
+    3）定义消费者与生产者相互交互的内容，与前一步代码结合后如下
 
     ```
     provider.setup()
@@ -134,7 +134,9 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
         .then(() => done())
     ```
 
-    4）测试代码中需要有逻辑请求mock的生产者服务
+    这里需要说明的是`state`, 这里的state代表的是生产者所处的状态，生产者可以根据不同的状态初始化不同的资源。因而消费者在不同状态下发送同样的请求，生产者却因为自身初始化资源的不同可以返回不同的结果。
+
+    4）测试代码中需要有发送请求到mock的生产者服务
 
     ```
     it('should response with user with id and name', (done) => {
@@ -206,9 +208,11 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 生产者端拿到契约后，需要验证的往往是数据加工到返回数据的过程。所以往往需要mock底层数据。
 
-不过下面的例子为了简便，没只是mock了返回数据， 也没有考虑底层数据，也没有考虑数据加工的逻辑。
+不过下面的例子为了简便，只是mock了返回数据， 没有考虑底层数据，也没有考虑数据加工的逻辑。
 
-在消费者测试的测试基础设施基础上，创建test/provider/provider-test.js:
+另外，由于消费者端生成的协议中定义了生产者的状态，需要在生产者端的测试中定义测试辅助状态初始化接口(`setup`)。
+
+在消费者测试的基础上，创建test/provider/provider-test.js:
 
 1. 启动本地的生产者端server，暴露出`/user/:id`接口，直接返回了mock的数据。
 
@@ -234,27 +238,21 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
     });
     ```
 
-2. 创建辅助endpoint `/states` 暴露api接口当前的状态(状态在消费者端生成的契约中是 `provider_state` 下的值 )。
+    这里直接让访问`/user/:id`的请求都返回了的数据：id为1， name为God1， 而在真实项目中其往往可能是`UserService.find(1)`
 
-    ```
-    server.get('/states', (req, res) => {
-      res.json({
-        "TodoApp": ['have a matched user']
-      });
-    });
-    ```
-
-3. 创建辅助endpoint `/setup`, 其往往根据state的不同来初始化不同底层数据，或者mock底层数据，在这个例子我们没有考虑mock底层数据，所以/setup只是打印了状态。
+2. 创建辅助endpoint `/setup`, 其往往根据state的不同来初始化不同底层数据，或者mock底层数据，在这个例子我们没有考虑mock底层数据，所以/setup只是打印了状态。
 
     ```
     server.post('/setup', (req, res) => {
-      const state = req.body.state
+      const state = req.body.state;
       console.log('state:', state);
-      res.end()
+      res.end();
     });
     ```
 
-4. 启动server，暴露端口8081
+    这里可以通过`req.body.state`获取到当前的状态，并根据状态的不同做不同的数据初始化。
+
+3. 启动server，暴露端口8081
 
     ```
     server.listen(8081, () => {
@@ -262,7 +260,7 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
     });
     ```
 
-5. 添加测试用例来验证生产者满足消费者的需求
+4. 添加测试用例来验证生产者满足消费者的需求
 
     ```
     describe('Pact Verification', () => {
@@ -270,7 +268,6 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
         const opts = {
           providerBaseUrl: 'http://localhost:8081',
-          providerStatesUrl: 'http://localhost:8081/states',
           providerStatesSetupUrl: 'http://localhost:8081/setup',
           pactUrls: [path.resolve(process.cwd(), './pacts/todoapp-todoservice.json')]
         }
@@ -398,13 +395,13 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 
 ## 契约测试存在的问题
 
-1. 生产者端的开发/维护人员的每次提交都对Pact测试负责，即便是消费者端修改导致Pact测试挂掉。
+1. 生产者端的开发/维护人员的每次提交都需要对契约测试负责，即便是消费者端修改导致生产者端契约测试挂掉。
 
-2. 消费者契约变化后提交给契约管理者与生产者提取契约验证两个行为之间存在时间差。
+2. 生产者端即便没有任何修改，契约测试也会可能会由于消费者端契约的修改而挂掉， 生产者端需要周期运行契约测试。
 
-3. 目前契约测试的环境只支持HTTP协议。
+3. 生产者端往往需要mock底层数据或数据处理逻辑以使得其能满足consumer的契约要求。
 
-4. 生产者端往往需要mock底层数据以使得其能满足consumer的结果要求。
+4. 目前契约测试的环境只支持HTTP协议。
 
 <br />
 
@@ -438,6 +435,8 @@ Pact测试又名契约测试，是在消费者服务于生产者服务之间的 
 - [Pact Docs](https://docs.pact.io/documentation/matching.html)
 
 - [本文的测试源码](https://github.com/zhouqing86/js-pact-tut)
+
+本文使用nodejs的pact版本为`2.6.0`。
 
 <script type="text/javascript">
 $(document).ready(function() {

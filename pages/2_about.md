@@ -88,7 +88,7 @@ ThoughtWorks是一家追求技术卓越的企业，我有幸2014年加入并且�
 
 技能列表
 -------
-以下均为我能熟练使用的技能：
+以下均为我能熟练使用的技术/技能：
 
 - 编程语言：Java/Ruby/Node.js/Scala/C++
 
@@ -113,6 +113,6 @@ ThoughtWorks是一家追求技术卓越的企业，我有幸2014年加入并且�
 - 其他：Git/Mac OS/Vagrant/zsh/HTML/CSS/JS/SASS/Linux基本命令行操作/LTE
 
 
-学习过但没有在项目中使用过：
+学习过但没有在项目中使用过或只是在项目中见过：
 
-- R语言/Python/Numpy/Pandans/Spring Cloud/ZooKeeper/Hadoop/Spark/React Native/Object C/Kotlin
+- Java多线程/Spring Cloud/Duboo/ZooKeeper/Kafka/Netty/AMQP/Hadoop/Spark/R语言/Python/Numpy/Pandans/ZooKeeper/Hadoop/Spark/Object C/Kotlin

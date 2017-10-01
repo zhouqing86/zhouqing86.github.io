@@ -3,13 +3,12 @@ layout: post
 comments: false
 categories: "React"
 date:   2017-9-17 00:30:54
-title: [WIP]Redux Form(6.0)
+title: Redux Form(6.0) (WIP)
 ---
 
 <div id="toc"></div>
-<br />
 
-项目中用到了Redux Form，在使用的过程中遇到很多问题，希望通过这篇文章来总结所获。
+项目中用到了Redux Form，在使用的过程中遇到很多问题，希望通过这篇文章来总结所获。d
 
 ## 需求的引入
 在介绍Redux Form之前，我们先了解在做一个表单（拿修改个人信息表单来说）时我们的一些具体需求：

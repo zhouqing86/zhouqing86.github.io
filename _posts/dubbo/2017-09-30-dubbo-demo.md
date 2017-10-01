@@ -3,7 +3,7 @@ layout: post
 comments: false
 categories: "dubbo"
 date:   2017-09-30 00:00:54
-title: Dubbo源码学习（一）之Dubbo Demo
+title: Dubbo源码学习（一）之dubbo-demo
 ---
 
 <div id="toc"></div>

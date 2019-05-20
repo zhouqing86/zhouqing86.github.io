@@ -8,13 +8,13 @@ permalink: /about/
 周清
 =============
 
-Web全栈软件开发工程师(Java/Ruby/Node.js/Scala/DevOps)
+Java高级工程师/Web全栈软件开发工程师(Java/Ruby/Node.js/DevOps)
 -----------------------
 
 - Phone: [15009206581](tel://15009206581)
 - Email: <27952278@qq.com>
 - QQ/微信号：27952278
-- 工作年限: 7年
+- 工作年限: 9年
 
 个人信息
 -------
@@ -22,24 +22,45 @@ Web全栈软件开发工程师(Java/Ruby/Node.js/Scala/DevOps)
 - 硕士研究生/郑州大学计算机软件与理论
 - 技术博客: [zhouqing86.github.io](http://zhouqing86.github.io/)
 - Github: [zhouqing86](https://github.com/zhouqing86/)
-- 期望职位: Java高级工程师，全栈软件工程师
+- 期望职位: Java高级工程师，Web全栈软件工程师
 - 期望城市: 深圳
+- Java语言相关：熟悉Spring Boot/MyBatis/Spring Cloud/Hibernate/Java多线程/JVM/Spring MVC/Dubbo/Netty/RabbitMQ/RxJava/Kafka/分布式事务等。
 
 个人总结/专长
 -------
 我是一个Web全栈开发人员（前端、后端、DevOps)，对测试驱动开发、持续集成与持续部署、微服务架构以及敏捷开发实践方法有较深刻的认识。
 
-1. 我有四年多Web开发的经验。一年三星数据系统有限公司的内部网站开发经验; 近三年[澳洲第一商业地产网站](https://www.realcommercial.com.au)网站的开发与维护和带团队的经验; 近半年带团队从零开始做ThoughtWorks校园新招聘网站的经验。
-
+1. 我有九年工作经验，六年Web开发的经验和两年多测试经验。其中三年多敏捷团队管理经验。
   * 技术上，熟练掌握Java/Ruby/Node.js相关Web项目的开发；掌握基础的DevOps实践(包括但不限于基础设施即代码，AWS相关资源与工具，docker, Ansible，负载均衡，0宕机部署等)。另熟悉如下实践/工具/架构/解决方案：数据库的1主+N备读写分离管理；数据库数据到搜索引擎进行数据同步的多种方式；持续集成与持续部署策略；网站的A/B测试；CDN(Akamai)的配置；网站性能调优；SEO优化；产品环境的运行/访问监控；Splunk日志管理；将庞大单体项目拆分为微服务架构；BFF架构；Serverless架构等。
 
-  * 管理上，从2015年带新人的高级开发人员到2016年10+人团队的团队/技术管理者（近1年经验），逐步理解敏捷开发实践。逐渐对于管理好团队的目标/计划、营造团队良好技术氛围、培养团队好的工作习惯、团队精神激励、团队工作流程优化、新人培养、沟通管理、风险管理有了一定的经验。
+  * 管理上，从2015年带新人的高级开发人员到2016年10+人团队的团队/技术管理者（近1年经验），此后在腾讯和EPAM也都是团队的Leader。逐步理解敏捷开发实践。逐渐对于管理好团队的目标/计划、营造团队良好技术氛围、培养团队好的工作习惯、团队精神激励、团队工作流程优化、新人培养、沟通管理、风险管理有了一定的经验。
 
-2. 此外，我有两年多测试/QA经验，擅长探索性测试，测试文档编写。转职开发后，QA的经验让我在开发时比很多其他开发同事更加注重代码逻辑缜密，更加注重单元测试，更加注重代码质量，也更加注重沟通。
+* 此外，我有两年多测试/QA经验，擅长探索性测试，测试文档编写。转职开发后，QA的经验让我在开发时比很多其他开发同事更加注重代码逻辑缜密，更加注重单元测试，更加注重代码质量，也更加注重沟通。
 
 工作经历
 -------
-## ThoughtWorks (2014年7月 ~ 至今)
+## EPAM System (2018年6月 ~ 至今)
+
+亿磐创立于1993年并植根于白罗斯和美国，是纽约证券交易所（NYSE:EPAM）的上市公司，并被认为是全球领先的产品开发和数字工程服务企业。亿磐利用其屡获殊荣的全球交付平台，正为遍布于北美、欧洲及亚太超过25个国家和地区的客户提供创新解决方案。
+
+### 瑞士银行中国IT项目维护与开发
+
+项目的TeamLeader，从零开始参与组建开发团队，参与瑞银中国核心系统的维护和新功能的开发。
+
+参与瑞银中国核心系统的维护和新功能的开发以及为将已存在的项目构建持续集成/部署的流水线。项目中主要用到的技术栈为Java/Tomcat/Websphere/Teamcity。
+
+
+## 腾讯 (2017年12月 ~ 2018年5月)
+
+### 腾讯内部某广告平台维护与开发
+
+腾讯的高级工程师级别，在五人项目中既承担技术Leader的工作也承担PM的职责。
+
+技术方面，使用的是Go/PHP/Vuejs，在项目中推动引入Docker，负责对新项目进行领域建模以及技术选型，也负责部分功能的实现和维护。
+
+PM方面，同时作为项目的敏捷教练，在项目中引入敏捷实践，跟踪项目的进度，参与需求分析。
+
+## ThoughtWorks (2014年7月 ~ 2017年11月)
 ThoughtWorks是一家追求技术卓越的企业，我有幸2014年加入并且能快速拓宽技术视野，也在ThoughtWorks获取到很多能够提升自己的机会。
 
 ### ThoughtWork校园招聘网站
@@ -71,7 +92,7 @@ ThoughtWorks是一家追求技术卓越的企业，我有幸2014年加入并且�
 
 在此期间我还负责了一个小项目(网站广告每季度导入)的改造，之前项目是开发人员使用Ruby Rake任务本地运行的方式(需要本地运行一个多小时且经常出错)将数据导入广告维护系统中。改造后引入Ruby多线程来导入数据缩短导入速度，并提供了单页面应用(Ruby Sinatra)供市场人员使用，对输入做适配处理，同时打印成功和失败的Log给使用者。
 
-## 三星数据系统(中国)有限公司 （2013年6月 ~ 2014年6月)
+## 三星数据系统(中国)有限公司 （2013年8月 ~ 2014年6月)
 2013年三星在西安建立研发中心，我有幸获得机会转职Java开发。
 
 ### SCM系统内部子系统
@@ -88,13 +109,13 @@ ThoughtWorks是一家追求技术卓越的企业，我有幸2014年加入并且�
 
 技能列表
 -------
-以下均为我能熟练使用的技术/技能：
+以下均为我能熟练使用的技能：
 
-- 编程语言：Java/Ruby/Node.js/Scala/C++
+- 编程语言：Java/Ruby/Node.js/Scala/C++/Go/PHP/Python
 
 - Web相关框架：RoR/Spring MVC/Play/MyBatis/Sinatra/Hibernate
 
-- 前端框架：ReactJS+Redux
+- 前端框架：ReactJS+Redux, Vue+Vuex, 微信小程序
 
 - 构建相关：Gradle/SBT/Grunt/Webpack
 
@@ -113,6 +134,8 @@ ThoughtWorks是一家追求技术卓越的企业，我有幸2014年加入并且�
 - 其他：Git/Mac OS/Vagrant/zsh/HTML/CSS/JS/SASS/Linux基本命令行操作/LTE
 
 
-学习过但没有在项目中使用过或只是在项目中见过：
+学习过但没有在生产环境项目中使用过：
 
-- Java多线程/Spring Cloud/Duboo/ZooKeeper/Kafka/Netty/AMQP/Hadoop/Spark/R语言/Python/Numpy/Pandans/ZooKeeper/Hadoop/Spark/Object C/Kotlin
+- Java相关：Dubbo/Netty/Spring Cloud/RabbitMQ/RxJava/Kafka/Hadoop/Spark
+
+- 其他: Memchached/ZooKeeper/R语言/Python/Numpy/Pandans/React Native/Object C/Kotlin

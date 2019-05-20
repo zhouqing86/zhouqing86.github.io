@@ -1,0 +1,100 @@
+---
+layout: post
+comments: false
+categories: 数据库总结
+date:   2019-04-24 09:21:54
+title: Redis总结以及Java相关库
+---
+
+<div id="toc"></div>
+
+## Redis基本概念
+
+### 基本数据类型
+
+Redis可以存储键与5种不同数据类型之间的映射。这5种数据结构类型分别为STRING/LIST/SET/HASH/ZSET。不过Redis的底层结构体是SDS(Simple Dynamic String, 简单动态字符串)。
+
+```
+struct sdshdr {
+    int len;
+    int free;
+    char buf[];
+}
+```
+
+
+
+### Redis事务
+
+Redis的事务和传统关系数据库的事务并不相同。传统关系型数据库BEGIN/COMMIT/ROLLBACK模式。而Redis事务以特殊命令MULTI命令开始，最后以EXEC结束。
+但是这种简单的事务在EXEC命令被调用之前不会执行任何实际操作，所以用户将没有办法根据读取的数据来做决定。
+
+
+## Redis应用
+
+### Redis存储Session
+
+### Redis存储排序数据
+
+### Redis分布式锁
+
+SETNX命令天生就适合用来实现锁的获取功能。
+
+### Redis集群
+
+#### 多个CPU多个Redis实例
+
+#### 多机器集群
+
+## Redis常见问题
+
+### 缓存穿透
+
+### 确保Redis不丢失数据
+
+### Redis性能提升
+
+`redis-benchmark`默认是使用50个客户端来进行性能测试，如果只使用一个客户端来进行性能测试，则命令如`redis-benchmark -c 1 -q`。
+
+- 命令执行流水线
+
+- 重用已有的Redis连接
+
+## Redis运维
+
+### INFO命令
+
+## Redis扩展
+
+### 分片
+
+分片本质上就是基于某些简单的规则将数据划分为更小的部分，然后根据数据所属的部分来决定将数据发送到哪个位置上面。
+
+
+### Lua语言脚本编程
+
+## JAVA中Redis的操作
+
+### Jedis
+
+Jedis是Redis的Java实现的客户端，其API提供了比较全面的Redis命令的支持。
+
+Github: https://github.com/xetorthio/jedis
+
+### Redisson
+
+Redisson实现了分布式和可扩展的Java数据结构，和Jedis相比，功能较为简单，不支持字符串操作，不支持排序、事务、管道、分区等Redis特性。
+
+Github: https://github.com/redisson/redisson#quick-start
+
+### Lettuce
+
+完全非阻塞的Redis客户端，用于线程安全同步，异步和响应使用，支持集群，Sentinel，管道和编码器。
+
+Github: https://github.com/lettuce-io/lettuce-core
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#toc').toc({ listType: 'ul', title: "<i>目录</i>" });
+});
+</script>

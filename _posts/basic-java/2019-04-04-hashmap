@@ -14,7 +14,7 @@ title: HashMap源码阅读(Java 1.8)
 
 ## 搭建Debug环境
 
-由于JVM本身有一些类中使用了HashMap，导致使用java.util.HashMap进行DEBUG时非常困难。
+由于JVM本身有一些类中使用了HashMap，导致使用java.util.HashMap进行DEBUG学习时比较困难。
 
 我这里使用的方式是将HashMap相关的代码拷贝生成自己的HashMap类。如我在自己项目的package map下创建如下文件并从java.util包中拷贝相关实现：
 
@@ -24,7 +24,7 @@ title: HashMap源码阅读(Java 1.8)
 
 - AbstractMap
 
-而后创建第一个单元测试：
+而后创建第一个基于我们拷贝出来的HashMap的单元测试：
 
 ```
 @Test
@@ -182,7 +182,7 @@ default void forEach(BiConsumer<? super K, ? super V> action) {
   }
   ```
 
-- remove方法注意传入的是两个参数，key和value，意味着只移除某个特定的键值对，而不是key下的所有键值对。
+- remove方法注意传入的是两个参数，key和value
 
 - replace(K key, V oldValue, V newValue)需要先找到相应key下的键值对，如果找不到返回false，找到了就`put(key, newValue)`
 
@@ -197,12 +197,115 @@ default void forEach(BiConsumer<? super K, ? super V> action) {
 - merge方法定义了只是key获取老值，并与传入的新值根据传入的函数进行合并。如果获取老值为NULL，就直接设置为新值。
   `V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction)`
 
+### 抽象类HashIterator
+
+#### 成员变量
+
+- 成员变量`next`和`current`为Node类型
+
+- 成员变量expectedModCount是int型，其是为了fail-fast存在的
+
+- index为int型，其指向的是当前的slot，即当前在HashMap的node数组的位置
+
+
+#### 类构造函数
+
+HashIterator构造函数完成了以下的初始化
+
+- expectedModCount的值会初始化为HashMap类的modCount
+
+- current的值为空，如果HashMap的Node数组table不为空，则将next赋值为第一个元素
+
+- index初始值为0，如果HashMap的Node数组table不为空，则index值为1
+
+#### 类方法
+
+nextNode方法:
+
+- 会先将HashMap的modCount与expectedModCount做比较，如果不相等，则应该有多线程操作此HashMap, fail-fast
+
+- 然后更新成员变量`current`和`next`。经典的语句，两句话实现多个功能：
+
+  ```
+  if ((next = (current = e).next) == null && (t = table) != null) {
+      do {} while (index < t.length && (next = t[index++]) == null);
+  }
+  ```
+
+remove方法：
+
+- 与`nextNode`方法类似，会先检查是不是有多线程操作对HashMap的修改，fail-fast
+
+- 将`current`置为空
+
+- 调用HashMap的`removeNode`方法
+
+#### 子类
+
+`KeyIterator`，`ValueIterator`以及`EntryIterator`都是HashIterator的子类，其区别只是对next()的实现不一样，
+分别返回`nextNode().key`, `nextNode().value`以及`nextNode()`。
+
+### HashMapSpliterator
+
+#### Spliterator接口
+
+Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是为了并行遍历元素而设计的一个迭代器，jdk1.8中的集合框架中的数据结构都默认实现了spliterator。
 
 ## HashMap中定义的重要方法
 
+### put
 
+键值对插入`V put(K key, V value)`，如果键已存在则用新的值覆盖旧的值，返回旧值;如果键不存在，则存入并返回NULL。
 
+其调用了`putVal(hash(key), key, value, false, true)`，第四个参数为onlyIfAbsent，第五个参数为evict(暂且不管它的用途)。
 
+#### putVal
+
+这个函数的详细处理过程为：
+
+- 如果table(Node[])为空或者长度为0，先调用resize()方法来初始化table。
+
+- 根据`(table.length - 1) & hash`找到目前key在table中的位置
+
+- 如果table中对应位置的Node为NULL，则调用newNode方法来创建新Node, `new Node<>(hash, key, value, next)`, 这里next为NULL
+
+- 如果table中对应位置的Node不为空，则需要找到键相匹配的键值对，首先判断第一个Node是不是，如果不是则判断Node节点是TreeNode还是普通Node分别进行处理。
+
+  ```
+  // Node<K,V> p = tab[i = (table.length - 1) & hash]
+  Node<K,V> e; K k;
+  if (p.hash == hash &&
+          ((k = p.key) == key || (key != null && key.equals(k))))
+      e = p;
+  else if (p instanceof TreeNode)
+      e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+  else {
+      for (int binCount = 0; ; ++binCount) {
+          if ((e = p.next) == null) {
+              p.next = newNode(hash, key, value, null);
+              if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                  treeifyBin(tab, hash);
+              break;
+          }
+          if (e.hash == hash &&
+                  ((k = e.key) == key || (key != null && key.equals(k))))
+              break;
+          p = e;
+      }
+  }
+
+  ```
+- 如果是哈希表中已经存在的键值对，则用新值替换旧值，并注意调用了回调函数afterNodeAccess(e)
+
+- 将modCount的值加一，表示哈希表的结构的变化次数加一
+
+- 将size加一，如果size大于threshold，则需要进行resize()
+
+- 调用回调函数`afterNodeInsertion(evict)`
+
+#### resize
+
+待续
 
 
 

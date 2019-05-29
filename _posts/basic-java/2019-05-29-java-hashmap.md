@@ -2,9 +2,11 @@
 layout: post
 comments: false
 categories: Java基础
-date:   2019-04-04 09:21:54
+date:   2019-05-29 10:30:54
 title: HashMap源码阅读 Java 1.8
 ---
+
+<div id="toc"></div>
 
 <div id="toc"></div>
 
@@ -314,7 +316,7 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 
 - 调用回调函数`afterNodeInsertion(evict)`
 
-#### resize
+### resize
 
 首先将重新计算threshold的值和新Node数组的长度：
 
@@ -345,7 +347,6 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 - 如果当前的Node不是`TreeNode`，则进行两个分类，一个分类是Node在当前Node数组和老Node数组所处位置相同；另一个分类是Node在新的数组的位置是当前数组的位置+当前数组的长度。
   如何做分类呢，代码中用的比较巧，由于oldCap是2的N次方，`(e.hash & oldCap) == 0`就意味着e.hash值比当前Node数组长度`oldCap`小，那么意味着其在新老Node数组中此Node所处位置是相同的。
   `(e.hash & oldCap) != 0`的情况则意味着e.hash值比`oldCap`大，其在新的Node数组的位置就需要+oldCap。
-
 
 
 <script type="text/javascript">

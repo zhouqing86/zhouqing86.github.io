@@ -245,11 +245,22 @@ remove方法：
 `KeyIterator`，`ValueIterator`以及`EntryIterator`都是HashIterator的子类，其区别只是对next()的实现不一样，
 分别返回`nextNode().key`, `nextNode().value`以及`nextNode()`。
 
+#### 使用类
+
+`KeySet`,`Values`以及`EntrySet`分别使用了`KeyIterator`，`ValueIterator`以及`EntryIterator`作为其`iterator`方法的返回值。
+
+而HashMap的方法`keySet`, `values`以及`entrySet`分别返回的是`KeySet`,`Values`以及`EntrySet`对象。
+
 ### HashMapSpliterator
 
 #### Spliterator接口
 
 Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是为了并行遍历元素而设计的一个迭代器，jdk1.8中的集合框架中的数据结构都默认实现了spliterator。
+
+#### 子类
+
+`KeySpliterator`,`ValueSpliterator`以及`EntrySpliterator`都是HashMapSpliterator的子类。
+其区别是对trySplit和forEachRemaining方法的实现不一样。
 
 ## HashMap中定义的重要方法
 
@@ -269,7 +280,7 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 
 - 如果table中对应位置的Node为NULL，则调用newNode方法来创建新Node, `new Node<>(hash, key, value, next)`, 这里next为NULL
 
-- 如果table中对应位置的Node不为空，则需要找到键相匹配的键值对，首先判断第一个Node是不是，如果不是则判断Node节点是TreeNode还是普通Node分别进行处理。
+- 如果table中对应位置的Node不为空，则需要找到键相匹配的键值对，首先判断第一个Node是不是正好是键值匹配的节点，如果不是则判断Node节点是TreeNode还是普通Node分别进行处理。
 
   ```
   // Node<K,V> p = tab[i = (table.length - 1) & hash]
@@ -305,8 +316,35 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 
 #### resize
 
-待续
+首先将重新计算threshold的值和新Node数组的长度：
 
+- 如果HashMap内部Node数组的长度大于MAXIMUM_CAPACITY，即`1 << 30`，则值重新设置threshold的值为`Integer.MAX_VALUE`,resize函数返回不再后续处理。
+
+- 如果内部Node数组的长度还可以翻倍扩展，则将threshold值设置为其当前threshold的两倍，且计算新Node数组的长度为老数组长度的两倍。
+
+- 如果Node数组的长度为0，但threshold的值不为0， 则其应为类似于`new HashMap(123)`构造的新鲜HashMap，新Node数组的长度将为当前threshold, 且重新计算threshold值为当前threshold值*`loadFactor`
+
+- 如果Node数组的长度为0，则设置threshold值为`DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY`，新Node数组的长度将为`DEFAULT_INITIAL_CAPACITY`
+
+其次创建Node数组：
+
+- 根据前面计算的新Node数组的长度创建新的Node数组
+
+  ```
+  Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+  ```
+
+最后将目前Node数组中的每个值放入新的Node数组中：
+
+- for循环遍历目前的Node数组，每个Node进行处理
+
+- 如果当前Node的next为空，则计算器在新Node数组中的位置为`e.hash & (newCap - 1)`，由于newCap都是2的N次方，即等于`e.hash % newCap`，, 赋值并将老的Node数组中相应位置置为null
+
+- 如果当前的Node为`TreeNode`，则调用方法`((TreeNode<K,V>)e).split(this, newTab, j, oldCap)`
+
+- 如果当前的Node不是`TreeNode`，则进行两个分类，一个分类是Node在当前Node数组和老Node数组所处位置相同；另一个分类是Node在新的数组的位置是当前数组的位置+当前数组的长度。
+  如何做分类呢，代码中用的比较巧，由于oldCap是2的N次方，`(e.hash & oldCap) == 0`就意味着e.hash值比当前Node数组长度`oldCap`小，那么意味着其在新老Node数组中此Node所处位置是相同的。
+  `(e.hash & oldCap) != 0`的情况则意味着e.hash值比`oldCap`大，其在新的Node数组的位置就需要+oldCap。
 
 
 

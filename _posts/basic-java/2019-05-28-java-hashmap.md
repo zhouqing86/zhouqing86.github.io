@@ -12,6 +12,8 @@ title: HashMap源码阅读 Java 1.8
 
 > 本文基于Java 1.8.0_121-b13版本
 
+因为此文较长，后续的针对成员变量和逻辑的分析需要花时间阅读。大部分人应该只是想大概了解下HashMap的使用，可以直接跳到使用章节。
+
 ## 搭建Debug环境
 
 由于JVM本身有一些类中使用了HashMap，导致使用java.util.HashMap进行DEBUG学习时比较困难。
@@ -197,6 +199,10 @@ default void forEach(BiConsumer<? super K, ? super V> action) {
 - merge方法定义了只是key获取老值，并与传入的新值根据传入的函数进行合并。如果获取老值为NULL，就直接设置为新值。
   `V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction)`
 
+### TreeNode类
+
+关于红黑树的实现这里不做详细介绍。可另开一篇来介绍TreeNode的算法实现。
+
 ### 抽象类HashIterator
 
 #### 成员变量
@@ -314,6 +320,19 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 
 - 调用回调函数`afterNodeInsertion(evict)`
 
+### get
+
+根据键获取值`V get(Object key)`,在方法中首先计算key的hash值，而后调用`getNode`方法。
+
+#### getNode
+
+- 先根据key的hash值查找其在Node数组中的位置`(tab.length - 1) & hash`
+
+- 判断Node的第一个位置是否就是要查找的`key`值，如果是就直接返回
+
+- 判断当前Node元素的`next`节点的类型，如果为TreeNode则调用TreeNode的`getTreeNode`方法
+  如果为Node则循环遍历`next`节点查找与Key值相等的节点。
+
 ### resize
 
 首先将重新计算threshold的值和新Node数组的长度：
@@ -345,6 +364,156 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 - 如果当前的Node不是`TreeNode`，则进行两个分类，一个分类是Node在当前Node数组和老Node数组所处位置相同；另一个分类是Node在新的数组的位置是当前数组的位置+当前数组的长度。
   如何做分类呢，代码中用的比较巧，由于oldCap是2的N次方，`(e.hash & oldCap) == 0`就意味着e.hash值比当前Node数组长度`oldCap`小，那么意味着其在新老Node数组中此Node所处位置是相同的。
   `(e.hash & oldCap) != 0`的情况则意味着e.hash值比`oldCap`大，其在新的Node数组的位置就需要+oldCap。
+
+
+## 使用
+
+### HashMap的创建
+
+```
+new HashMap();
+new HashMap(1000);
+new HashMap(1000, 0.8f);
+```
+
+可以针对其写测试如下去测试`size()`，`capacity()`, `threshold`, `table`, `loadFactor`值初始化以及插入数据后的值的变化：
+
+```
+HashMap hashMap = new HashMap();
+assertEquals(0, hashMap.size());
+assertEquals(0.75, hashMap.loadFactor, 0.000001);
+assertEquals(0, hashMap.threshold);
+assertEquals(16, hashMap.capacity());
+assertNull(hashMap.table);
+hashMap.put(1,1);
+assertEquals(1, hashMap.size());
+assertEquals(16, hashMap.table.length);
+
+
+hashMap = new HashMap(1000);
+assertEquals(0, hashMap.size());
+assertEquals(0.75, hashMap.loadFactor, 0.000001);
+assertEquals(1024, hashMap.capacity());
+assertEquals(1024, hashMap.threshold);
+hashMap.put(1,1);
+assertEquals(1, hashMap.size());
+assertEquals(1024*0.75, hashMap.threshold, 0.000001);
+assertEquals(1024, hashMap.capacity());
+assertEquals(1024, hashMap.table.length);
+
+hashMap = new HashMap(1000, 0.8f);
+assertEquals(0, hashMap.size());
+assertEquals(0.8, hashMap.loadFactor, 0.000001);
+assertEquals(1024, hashMap.capacity());
+assertEquals(1024, hashMap.threshold);
+hashMap.put(1,1);
+assertEquals(1, hashMap.size());
+assertEquals(Math.floor(1024*0.8), hashMap.threshold, 0.000001);
+assertEquals(1024, hashMap.capacity());
+assertEquals(1024, hashMap.table.length);
+```
+
+关于设置初始化容量为1000，但threshold却初始化为1024，参考`tableSizeFor`方法详解。
+
+而为什么threshold初始化为1024，插入数据后却变成了`1024*0.75`，参考`resize`方法详解。
+
+另创建HashMap时候如果没有精确定义键值的类型，则key和value就可以为任意的Object对象，如:
+
+```
+HashMap map = new HashMap();
+map.put("a", 1);
+map.put(1, "a");
+map.put(0, true);
+map.put(true, 1.2);
+map.put(false, "b");
+```
+
+更建议的使用方法是精确定义key,value的类型：
+
+```
+HashMap<String, Integer> map = new HashMap<>();
+map.put("a", 1);
+assertEquals(1, map.size());
+```
+
+注意不要使用`HashMap map=new HashMap<String, Integer>()`的方式，没有意义，并不会约束住Key和Value的类型。
+
+### HashMap的自动扩容
+
+当HashMap的size超过`threshold`时，将对HashMap进行扩容：即重新创建新的Node数组，数组的长度`一般`将为过去的两倍。也有不为两倍的情况，具体看`resize`函数详解。
+
+```
+HashMap map = new HashMap(2);
+assertEquals(0, map.size());
+assertEquals(0.75, map.loadFactor, 0.000001);
+assertEquals(2, map.threshold);
+map.put(1, 1);
+assertEquals(1, map.threshold);
+assertEquals(2, map.table.length);
+map.put(2, 2);
+assertEquals(3, map.threshold);
+assertEquals(4, map.table.length);
+map.put(3, 3);
+map.put(4, 4);
+assertEquals(6, map.threshold);
+assertEquals(8, map.table.length);
+```
+
+### HashMap的遍历
+
+有四种常用的遍历方式。我们先创建一个HashMap:
+
+```
+HashMap<Integer, String> idNameMap = new HashMap<>();
+idNameMap.put(1, "Zhang San");
+idNameMap.put(2, "Li Si");
+```
+
+- keySet
+
+```
+for (Integer key : idNameMap.keySet()) {
+  ....
+}
+```
+
+- entrySet
+
+```
+for (Map.Entry<Integer,String> entry : idNameMap.entrySet()) {
+  ....
+}
+```
+
+- values
+
+```
+for (String value : idNameMap.values()) {
+  .....
+}
+```
+
+- 使用迭代器来遍历
+
+```
+Iterator<Integer> keyIterator = idNameMap.keySet().iterator();
+while (keyIterator.hasNext()) {
+    Integer key = (Integer) keyIterator.next();
+    .....
+}
+
+Iterator<String> valueIterator = idNameMap.values().iterator();
+while (valueIterator.hasNext()) {
+    String value = (String) valueIterator.next();
+    .....
+}
+
+Iterator<String> entryIterator = idNameMap.entrySet().iterator();
+while (entryIterator.hasNext()) {
+    Map.Entry<Integer,String> entry = (Map.Entry<Integer,String>) entryIterator.next();
+    .....
+}
+```
 
 
 <script type="text/javascript">

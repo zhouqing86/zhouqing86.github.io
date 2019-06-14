@@ -41,6 +41,8 @@ public void testNewHashMap() throws Exception {
 
 ## 一些常量和成员变量
 
+- MAXIMUM_CAPACITY，最大容量为`1 << 30`，其16进制表示`0x40000000`，10进制表示`1073741824`。注意Integer.MAX_VALUE的值是`0x7fffffff`, 10进制为`2147483647`。而`1 << 31`，即16进制`0x80000000`则变成了`-2147483648`，这也就可以理解MAXIMUM_CAPACITY为什么不是`1 << 31`,可是为什么不是`Integer.MAX_VALUE`呢？
+
 - Node<K,V>[] table， 最底层的存储Key, Value的对象数据。
 
 - entrySet是一个集合，其将存储所有的键值对
@@ -270,6 +272,25 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 
 ## HashMap中定义的重要方法
 
+### hash
+
+其实现看起来很简单：
+
+```
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+}
+```
+
+但解释起来还是需要一些时间的：
+
+- key.hashCode()函数调用的是key键值类型自带的哈希函数，它返回一个32位int类型的散列值。
+
+- 计算出来的哈希值的区间很大(-2147483648到2147483648)，但是我们的的Node数组可能并不大。散列值一般只会用到后面的位，但是如果只取后面的位，碰撞会很严重。
+
+- 扰动函数就被发明出来了：右移16位，然后高16位和低16位做异或。这样就混合原始哈希码的高位和低位，以此来加大低位的随机性，而混合后的低位也掺杂了高位的部分特征，这样高位的信息也算是保留了下来。
+
 ### put
 
 键值对插入`V put(K key, V value)`，如果键已存在则用新的值覆盖旧的值，返回旧值;如果键不存在，则存入并返回NULL。
@@ -282,7 +303,7 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
 
 - 如果table(Node[])为空或者长度为0，先调用resize()方法来初始化table。
 
-- 根据`(table.length - 1) & hash`找到目前key在table中的位置
+- 根据`(table.length - 1) & hash`找到目前key在table中的位置，由于`table.length`为2的整数次幂，其相当于低位掩码。这里比取余更安全是因为这里的hash可能是负数。
 
 - 如果table中对应位置的Node为NULL，则调用newNode方法来创建新Node, `new Node<>(hash, key, value, next)`, 这里next为NULL
 
@@ -310,7 +331,6 @@ Spliterator是一个可分割迭代器(splitable iterator)，Spliterator就是�
           p = e;
       }
   }
-
   ```
 - 如果是哈希表中已经存在的键值对，则用新值替换旧值，并注意调用了回调函数afterNodeAccess(e)
 

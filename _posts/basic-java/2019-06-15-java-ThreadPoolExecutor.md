@@ -10,33 +10,23 @@ title: ThreadPoolExecutor源码阅读 Java 1.8
 
 > 本文基于Java 1.8.0_121-b13版本
 
-AbstractQueuedSynchronizer类是用来构建锁或者其他同步组件的基础框架类。
+线程池主要是为了解决两个问题：
 
-因为此文较长，后续的针对成员变量和逻辑的分析需要花时间阅读。大部分人应该只是想大概了解下AbstractQueuedSynchronizer的使用，可以直接跳到使用章节。
+- 大量异步执行的任务执行时候性能的提升
 
-AbstractQueuedSynchronizer被许多并发工具类类所使用或继承，如`ReentrantLock`,`ReentrantReadWriteLock`,`CountDownLatch`, `Semaphore`和`ThreadPoolExecutor.Worker`。
+- 对于线程资源和界限的控制
 
-## 什么是AbstractQueuedSynchronizer
+线程池里线程的创建规则如下：
 
-这里先引用其源码类里的一段英文说明:
+- 调用ThreadPoolExecutor的execute提交线程，首先检查CorePool，如果CorePool内的线程小于CorePoolSize，新创建线程执行任务
 
-```
-Provides a framework for implementing blocking locks and related synchronizers (semaphores, events, etc) that rely on first-in-first-out (FIFO) wait queues.This class is designed to be a useful basis for most kinds of synchronizers that rely on a single atomic int value to represent state.
-```
+- 如果当前CorePool内的线程大于等于CorePoolSize，那么将线程加入到workQueue，其类型为BlockingQueue
 
-`AbstractQueuedSynchronizer`是一个`抽象类`，但是英文说明称其为`框架`，瞬间高大上了。这个类为`依赖先进先出队列`的`阻塞锁`和`相关同步器`提供了基础实现。对于大部分同步器，只是依赖于对于一个整型`state`的同步修改。
+- 如果不能加入workQueue，在小于MaxPoolSize的情况下创建线程执行任务
 
-这里其实可以得到很多的信息：
-
-- `AbstractQueuedSynchronizer`中使用了先进先出队列
-
-- `AbstractQueuedSynchronizer`有一个整型的`state`
-
-
-
+- 如果线程数大于等于MaxPoolSize，那么执行拒绝策略
 
 ## 一些常量和成员变量
-
 
 
 ## HashMap中定义的静态类
@@ -47,23 +37,11 @@ Provides a framework for implementing blocking locks and related synchronizers (
 
 ## 使用
 
-定义子类来继承`AbstractQueuedSynchronizer`，覆盖如下方法：
 
-- tryAcquire
-
-- tryRelease
-
-- tryAcquireShared
-
-- tryReleaseShared
-
-- isHeldExclusively
 
 ## 参考文章
 
-- [AbstractQueuedSynchronizer源码解读](https://www.cnblogs.com/micrari/p/6937995.html)
-
-- [Doug Lea的AQS论文](http://gee.cs.oswego.edu/dl/papers/aqs.pdf)
+- [深入理解java线程池—ThreadPoolExecutor](https://www.jianshu.com/p/ade771d2c9c0)
 
 
 <script type="text/javascript">

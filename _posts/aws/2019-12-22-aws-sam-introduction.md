@@ -111,6 +111,8 @@ brew install aws-sam-cli
 
 - [What Is the AWS Serverless Application Repository?](https://docs.aws.amazon.com/serverlessrepo/latest/devguide/what-is-serverlessrepo.html)
 
+- [Wild Rydes Serverless Workshops](https://github.com/aws-samples/aws-serverless-workshops)
+
 <script type="text/javascript">
 $(document).ready(function() {
     $('#toc').toc({ listType: 'ul', title: "<i>目录</i>" });

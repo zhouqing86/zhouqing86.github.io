@@ -1171,31 +1171,481 @@ React默认是单页面的，如果我们希望前端也支持多路由，需要
 
   类似的方式修改`src/views/VersionView`和`src/views/NotFoundView`.
 
-## 状态管理
+## redux状态管理
 
-### redux
+React本身没有提供一个统一的状态管理工具，其每个组件对每个组件的状态负责，本项目引入redux来做统一的状态管理。
 
-#### react-redux
+### react-redux
 
+- `yarn add redux react-redux @reduxjs/toolkit`引入依赖
 
-#### redux toolkit
+- 创建`src/views/countReducer.js`:
+
+  ```
+  import { createSlice } from '@reduxjs/toolkit';
+
+  const countSlice = createSlice({
+    name: 'count',
+    initialState: {
+      count: 0,
+    },
+    reducers: {
+      increment: (state) => {
+        state.count++;
+      },
+      decrement: (state) => {
+        state.count--;
+      },
+    },
+  });
+
+  export const selectCount = (state) => state.count.count;
+
+  export const { increment, decrement } = countSlice.actions;
+
+  export default countSlice.reducer;
+  ```
+
+- 创建`src/store.js`
+
+  ```
+  import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+  import formReducer from 'src/views/FormView/formReducer';
+
+  const middleware = [...getDefaultMiddleware()];
+
+  const store = configureStore({
+    reducer: {
+      count: countReducer,
+    },
+    middleware,
+  });
+
+  export default store;
+  ```
+
+- 修改`index.js`
+
+  ```
+  import React from 'react';
+  import ReactDOM from 'react-dom';
+  import { BrowserRouter } from 'react-router-dom';
+  import { Provider } from 'react-redux';
+  import App from './App';
+  import * as serviceWorker from './serviceWorker';
+  import store from './store';
+
+  ReactDOM.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+
+  serviceWorker.unregister();
+  ```
+
+- 修改`src/views/HomeView.js`
+
+  ```
+  import React from 'react';
+  import PropTypes from 'prop-types';
+  import { IconButton, makeStyles } from '@material-ui/core';
+  import { useSelector, useDispatch } from 'react-redux';
+  import { Plus as PlusIcon, Minus as MinusIcon } from 'react-feather';
+  import clsx from 'clsx';
+  import Page from 'src/components/Page';
+  import { selectCount, increment, decrement } from './countReducer';
+
+  const useStyles = makeStyles((theme) => ({
+    ...
+  }));
+
+  const HomeView = ({ className, ...rest }) => {
+    const classes = useStyles();
+    const count = useSelector(selectCount);
+    const dispatch = useDispatch();
+
+    return (
+      <Page className={classes.root} title="Home">
+        <div className={clsx(className, classes.app)} {...rest}>
+          <IconButton aria-label="Increment" onClick={() => dispatch(increment())}>
+            <PlusIcon />
+          </IconButton>
+          <IconButton aria-label="Decrement" onClick={() => dispatch(decrement())}>
+            <MinusIcon />
+          </IconButton>
+          {count}
+        </div>
+      </Page>
+    );
+  };
+
+  HomeView.propTypes = {
+    className: PropTypes.string,
+  };
+
+  export default HomeView;
+  ```
+
+`createSlice`使得创建一个reducer变得更加方便，介绍文档可参考 [Introducing: createSlice](https://redux-toolkit.js.org/tutorials/basic-tutorial#introducing-createslice)
+
+关于Reduce的介绍参考[Redux Getting Start](https://redux.js.org/introduction/getting-started)
 
 ## 异步请求
 
+前端的开发往往涉及到的一个很重要的功能就是发送异步请求，如从后端的API中拿取用户列表，并将列表显示在界面上。
+
+### mockServer
+
+往往在项目中，前端程序和后端程序是分离的，如前端使用ReactJS，而后端使用Spring Boot，如何做到前后端开发同时进行呢。这里就引入了mock server，可以将前端开发和后端开发隔离开来，非常方便的进行并行开发。
+
+- `yarn add -D json-server` 引入依赖
+
+- 创建`mockdata/db.json`
+
+  ```
+  {
+    "users": [
+      { "id": 1, "username": "lisi", "alias": "李四", "email": "lisi@test.com", "phone": "1111111111" },
+      { "id": 2, "username": "zhangsan", "alias": "张三", "email": "zhangsan@test.com", "phone": "222222222" },
+      { "id": 3, "username": "wanger", "alias": "王二", "email": "wanger@test.com", "phone": "33333333" },
+      { "id": 4, "username": "lilei", "alias": "李雷", "email": "lilei@test.com",  "phone": "444444444" },
+      { "id": 5, "username": "hanmeimei", "alias": "韩梅梅", "email": "hanmeimei@test.com", "phone": "555555555" }
+    ]
+  }
+  ```
+
+- `package.json`中添加命令:
+
+  ```
+  "mockServer": "json-server --watch mockdata/db.json --port 4010",
+  ```
+- 执行`yarn mockServer`就可以访问[http://localhost:4010/users](http://localhost:4010/users)了，也可以访问[http://localhost:4000/users/1](http://localhost:4000/users/1)来获取用户id为1的用户的数据
+
+
+`json-server`提供的api都是restful api风格的，对于查询结果其支持分页，具体的查看其文档 [json-server](https://github.com/typicode/json-server)
+
 ### axios
 
+NodeJS提供了`fetch`来处理HTTP请求，但是其相对比较原生，项目中使用`axios`来进行HTTP请求的处理。
+
+- `yarn add axios`引入依赖
+
+- 修改`src/config/config.default.js`的`API_BASE_URL`的值为`http://localhost:4010`
+
+  ```
+  module.exports = {
+    API_BASE_URL: 'http://localhost:4010',
+    FORM_LIST_PAGE_SIZE: 3,
+  };
+  ```
+
+- 创建`src/api/usersApi.js`
+
+  ```
+  import axios from 'axios';
+  import config from 'src/config';
+
+  const fetchUsers = ({ page, pageSize }) => {
+    return axios.get(`${config.API_BASE_URL}/users?_page=${page}&_limit=${pageSize}`);
+  };
+
+  const createUser = (user) => {
+    return axios.post(`${config.API_BASE_URL}/users`, user);
+  };
+
+  const deleteUser = (id) => {
+    return axios.delete(`${config.API_BASE_URL}/forms/${id}`);
+  };
+
+  export { fetchUsers, createUser, updateUser, deleteUser };
+  ```
+
+### 与redux做集成
+
+- 创建`src/views/UserListView/userListReducer.js`
+
+  ```
+  import { createSlice } from '@reduxjs/toolkit';
+  import get from 'lodash/get';
+  import { fetchUsers as fetchUsersApi, deleteUser as deleteUserApi } from 'src/api/usersApi';
+  import config from 'src/config';
+
+  const userListSlice = createSlice({
+    name: 'userList',
+    initialState: {
+      users: [],
+      page: {
+        totalCount: 0,
+        page: 0,
+        pageSize: config.FORM_LIST_PAGE_SIZE,
+      },
+      loading: 'idle',
+      error: null,
+    },
+    reducers: {
+      startAsyncRequest: (state) => {
+        state.loading = 'pending';
+      },
+      fetchUsersSuccess: (state, action) => {
+        state.loading = 'idle';
+        state.users = action.payload.rows;
+        state.page.totalCount = action.payload.totalCount;
+      },
+      fetchUsersFailed: (state, action) => {
+        state.loading = 'idle';
+        state.error = action.payload.message;
+      },
+      removeUserSuccess: (state) => {
+        state.loading = 'idle';
+      },
+      removeUserFailed: (state, action) => {
+        state.loading = 'idle';
+        state.error = action.payload.message;
+      },
+      updatePageData: (state, action) => {
+        state.page = {
+          ...state.page,
+          ...action.payload,
+        };
+      },
+    },
+  });
+
+  export const selectUsers = (state) => state.userList.users;
+  export const selectPageData = (state) => state.userList.page;
+  export const selectIsPageLoading = (state) => state.userList.loading === 'pending';
+
+  export const { startAsyncRequest, fetchUsersSuccess, fetchUsersFailed, removeUserSuccess, removeUserFailed, updatePageData } = userListSlice.actions;
+
+  export const fetchUsers = () => async (dispatch, getState) => {
+    dispatch(startAsyncRequest());
+    const state = getState();
+    try {
+      const page = get(state, 'userList.page');
+      const response = await fetchUsersApi({
+        page: page.page + 1,
+        pageSize: page.pageSize,
+      });
+      const rows = response.data;
+      console.log(response);
+      const totalCount = Number(get(response.headers, 'x-total-count', 0));
+      dispatch(fetchUsersSuccess({ totalCount, rows }));
+    } catch (err) {
+      console.log('Error happen when try to fetch users', err);
+      dispatch(fetchUsersFailed({ message: 'Error happen when try to fetch users!' }));
+    }
+  };
+
+  export const removeUser = (userId) => async (dispatch) => {
+    dispatch(startAsyncRequest());
+    try {
+      await deleteUserApi(userId);
+      dispatch(removeUserSuccess());
+    } catch (err) {
+      console.log(`Failed to remove user with id=${userId}, error is`, err);
+      dispatch(removeUserFailed({ message: `Failed to remove user with id=${userId}` }));
+    }
+  };
+
+  export default userListSlice.reducer;  
+  ```
+
+- 创建`src/views/UserListView/index.js`
+
+  ```
+  import React, { useEffect, useCallback } from 'react';
+  import { useDispatch, useSelector } from 'react-redux';
+  import { Box, Container, Dialog, DialogContent, CircularProgress, makeStyles } from '@material-ui/core';
+  import Page from 'src/components/Page';
+  import { fetchUsers, selectUsers, selectIsPageLoading } from './userListReducer';
+  import Toolbar from './Toolbar';
+  import Results from './Results';
+
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      backgroundColor: theme.palette.background.dark,
+      minHeight: '100%',
+      paddingBottom: theme.spacing(3),
+      paddingTop: theme.spacing(3),
+    },
+  }));
+
+  const UserListView = () => {
+    const classes = useStyles();
+    const users = useSelector(selectUsers);
+    const isPagePending = useSelector(selectIsPageLoading);
+    const dispatch = useDispatch();
+    const stableDispatch = useCallback(dispatch, []);
+
+    useEffect(() => {
+      const fetchFormList = () => {
+        stableDispatch(fetchUsers());
+      };
+
+      fetchFormList();
+    }, [stableDispatch]);
+
+    return (
+      <Page className={classes.root} title="Form List">
+        <Container maxWidth={false}>
+          <Toolbar />
+          <Box mt={3}>
+            <Results users={users} />
+          </Box>
+          <Dialog open={isPagePending}>
+            <DialogContent>
+              <CircularProgress />
+            </DialogContent>
+          </Dialog>
+        </Container>
+      </Page>
+    );
+  };
+
+  export default UserListView;  
+  ```
+
+- 而对于`src/views/UserListView/Toolbar.js`和`src/views/UserListView/Result.js`这里不在单独列出来，具体分页相关的代码可以参考这个提交[Add UserListView](https://github.com/zhouqing86/react-template-project/commit/9f847ce67e68a1b6cc7dcb9149355bc05efbccbb)
+
+- 将新常见的reducer添加到`src/store.js`中
+
+- 修改`src/routes.js`，使得有URL可以指向`UserListView`
 
 ## 表单
 
+常用的表单库如：
+
+- redux-form
+
+- formik
+
+- react-jsonschema-form
+
+### 登录表单
+
+本项目使用`formik`来做为登录表单。
+
+- `yarn add formik yup`添加依赖
+
+- 创建`src/view/auth/LoginView`
+
+  ```
+  import React from 'react';
+  import { useNavigate } from 'react-router-dom';
+  import * as Yup from 'yup';
+  import { Formik } from 'formik';
+  import { Box, Button, Container, TextField, Typography, makeStyles } from '@material-ui/core';
+  import Page from 'src/components/Page';
+  import config from 'src/config';
+
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      backgroundColor: theme.palette.background.white,
+      marginTop: theme.spacing(10),
+      height: '100%',
+      paddingBottom: theme.spacing(3),
+      paddingTop: theme.spacing(3),
+    },
+  }));
+
+  const LoginView = () => {
+    const classes = useStyles();
+    const navigate = useNavigate();
+
+    return (
+      <Page className={classes.root} title="Login">
+        <Box display="flex" flexDirection="column" height="70%" justifyContent="center">
+          <Container maxWidth="sm">
+            <Formik
+              initialValues={{
+                username: 'admin',
+                password: 'admin',
+              }}
+              validationSchema={Yup.object().shape({
+                username: Yup.string().max(255).required('User name is required'),
+                password: Yup.string().max(255).required('Password is required'),
+              })}
+              onSubmit={() => {
+                navigate(`${config.ADMIN_CONTEXT_PATH}/users`, { replace: true });
+              }}
+            >
+              {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                <form onSubmit={handleSubmit}>
+                  <Box mb={3}>
+                    <Typography color="textPrimary" variant="h2">
+                      Sign in
+                    </Typography>
+                  </Box>
+                  <TextField
+                    error={Boolean(touched.username && errors.username)}
+                    fullWidth
+                    helperText={touched.username && errors.username}
+                    label="User Name"
+                    margin="normal"
+                    name="username"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="username"
+                    value={values.username}
+                    variant="outlined"
+                  />
+                  <TextField
+                    error={Boolean(touched.password && errors.password)}
+                    fullWidth
+                    helperText={touched.password && errors.password}
+                    label="Password"
+                    margin="normal"
+                    name="password"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="password"
+                    value={values.password}
+                    variant="outlined"
+                  />
+                  <Box my={2}>
+                    <Button color="primary" disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained">
+                      Sign in now
+                    </Button>
+                  </Box>
+                  <Typography color="textSecondary" variant="body1">
+                    Don&apos;t have an account? Please ask super user to add a new account.
+                  </Typography>
+                </form>
+              )}
+            </Formik>
+          </Container>
+        </Box>
+      </Page>
+    );
+  };
+
+  export default LoginView;
+  ```
+
+- 修改`src/routes.js`,
+
+  ```
+  {
+    path: config.ADMIN_CONTEXT_PATH,
+    element: <MainLayout />,
+    children: [
+      { path: 'login', element: <LoginView /> },
+      { path: 'users', element: <UserListView /> },
+      { path: '/', element: <Navigate to={`${config.ADMIN_CONTEXT_PATH}/login`} /> },
+      { path: '*', element: <Navigate to="/404" /> },
+    ],
+  }
+  ```
+
 ## 工具库
 
-### lodash
-
-
-
-## 总结
-
-
+- lodash
 
 
 

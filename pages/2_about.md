@@ -27,7 +27,7 @@ Java高级工程师/Web全栈软件开发工程师(Java/Ruby/Node.js/DevOps)
 
 个人总结/专长
 -------
-我是一个Web全栈开发人员（前端、后端、DevOps)，对测试驱动开发、持续集成与持续部署、微服务架构以及敏捷开发实践方法有深刻的认识。
+我是一个Web全栈开发人员（后端：Java, Ruby, Node.JS, Scala, Golang等)，（前端：ReactJS、VueJS等)，（DevOps：AWS，Kubernetes，GitOps，Ansible等），对测试驱动开发、持续集成与持续部署、微服务架构以及敏捷开发实践方法有深刻的认识。
 
 1. 我有十一年工作经验，其中四年多敏捷团队管理经验。
   * 技术上，熟练掌握Java/Ruby/Node.js相关Web项目的开发；掌握基础的DevOps实践(包括但不限于基础设施即代码，AWS相关资源与工具，Kubernetes, docker, Ansible，负载均衡，0宕机部署等)。另熟悉如下实践/工具/架构/解决方案：数据库的1主+N备读写分离管理；数据库数据到搜索引擎进行数据同步的多种方式；持续集成与持续部署策略；网站的A/B测试；CDN(Akamai)的配置；网站性能调优；SEO优化；产品环境的运行/访问监控；Splunk日志管理；将庞大单体项目拆分为微服务架构；BFF架构；Serverless架构等。
@@ -55,6 +55,10 @@ Java高级工程师/Web全栈软件开发工程师(Java/Ruby/Node.js/DevOps)
 - 参与多个ReactJS+Redux前端项目的开发
 
 - 目前项目的Tech Leader
+
+### Refinitiv
+
+在项目中经常使用的技术栈有Java, AWS, Jenkins, Terraform. 项目中的敏捷教练，引导团队使用好的敏捷实践、注重代码质量、培训、解决技术难题。
 
 ### 瑞士银行(UBS)
 
@@ -126,29 +130,22 @@ ThoughtWorks是一家追求技术卓越的企业，我有幸2014年加入并且�
 
 - 编程语言：Java/Ruby/Node.js/Scala/C++/Go/PHP/Python
 
-- Web相关框架：RoR/Spring MVC/Play/MyBatis/Sinatra/Hibernate
+- Web相关框架：Spring MVC/RoR/Play/MyBatis/Sinatra/Hibernate
 
 - 前端框架：ReactJS+Redux, Vue+Vuex, 微信小程序
 
-- 构建相关：Gradle/SBT/Grunt/Webpack
+- 构建相关：Gradle/Maven/SBT/Grunt/Webpack/Rake
 
-- 单元测试：Junit/Rspec/Mocha+Chai
+- 单元测试：Junit/Rspec/Mocha+Chai/Jest
 
 - 数据库相关：MySQL/MongoDB/Redis/ElasticSearch/Oracle PL SQL
 
 - Web/应用服务器：Nginx/Apache/Tomcat/Jetty/Unicorn
 
-- DevOps相关：AWS/Docker/Ansible/NewRelic/Splunk/Shell/Bamboo/Buildkite/Jenkins/阿里云/Daocloud/七牛
+- DevOps相关：AWS/Kubernetes/GitOps/Docker/Ansible/Terraform/NewRelic/Splunk/Jaeger/Shell/Bamboo/Teamcity/Buildkite/Jenkins/阿里云/Daocloud/七牛
 
-- 编辑器：IntelliJ IDEA/Ruby Mine/Atom/Sublime/vim
+- 编辑器：IntelliJ IDEA/Ruby Mine/VS Code/Atom/Sublime/vim
 
-- 英语：熟练的口语日常沟通、有商务英语写作基础、能较顺畅的学习无字幕的英文技术视频(Udemy)
+- 英语：比较熟练的口语日常沟通、有商务英语写作基础
 
 - 其他：Git/Mac OS/Vagrant/zsh/HTML/CSS/JS/SASS/Linux基本命令行操作/LTE
-
-
-学习过但没有在生产环境项目中使用过：
-
-- Java相关：Dubbo/Netty/Spring Cloud/RabbitMQ/RxJava/Kafka/Hadoop/Spark
-
-- 其他: Memchached/ZooKeeper/R语言/Python/Numpy/Pandans/React Native/Object C/Kotlin

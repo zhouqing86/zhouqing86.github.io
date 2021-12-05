@@ -61,7 +61,7 @@ Java高级工程师/Web全栈软件开发工程师(Java/Ruby/Node.js/DevOps)
 
 在项目中经常使用的技术栈有Java, AWS, Jenkins, Terraform. 项目中的敏捷教练，引导团队使用好的敏捷实践、注重代码质量、培训、解决技术难题。
 
-### 瑞士银行(UBS)
+### 瑞银集团(UBS)
 
 中国项目的TeamLeader，从零开始参与组建开发团队，参与瑞银中国核心系统的维护和新功能的开发。
 
